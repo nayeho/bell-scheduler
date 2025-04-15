@@ -1,5 +1,6 @@
 name: Build Windows EXE
 
+# ✅ 수동 실행 (GitHub 웹에서 직접 "Run workflow" 클릭 가능)
 on:
   workflow_dispatch:
 
