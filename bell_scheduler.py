@@ -1,16 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import tkinter as tk
 from tkinter import messagebox, filedialog
 import threading
 import time
 from datetime import datetime
-from playsound import playsound
 import os
+import pygame  # 🔄 playsound 대신
 
 class BellSchedulerApp:
     def __init__(self, root):
@@ -25,15 +19,14 @@ class BellSchedulerApp:
         ]
 
         self.bell_path = os.path.abspath("bell.mp3")
-
         self.time_vars = []
         self.create_widgets()
         self.running = True
+        pygame.mixer.init()  # 초기화
         threading.Thread(target=self.check_time_loop, daemon=True).start()
 
     def create_widgets(self):
         tk.Label(self.root, text="벨 울릴 시간 설정 (HH:MM)").pack()
-
         for t in self.times:
             var = tk.StringVar(value=t)
             entry = tk.Entry(self.root, textvariable=var, width=10)
@@ -43,7 +36,6 @@ class BellSchedulerApp:
         tk.Label(self.root, text="MP3 파일 경로").pack(pady=(10,0))
         self.mp3_label = tk.Label(self.root, text=self.bell_path, fg="blue", wraplength=350)
         self.mp3_label.pack()
-
         tk.Button(self.root, text="MP3 변경", command=self.change_mp3).pack(pady=5)
         tk.Button(self.root, text="설정 저장 및 벨 시작", command=self.save_settings).pack(pady=10)
         tk.Button(self.root, text="종료", command=self.exit_program).pack()
@@ -65,18 +57,17 @@ class BellSchedulerApp:
             if now in self.times and now not in already_rung:
                 already_rung.add(now)
                 try:
-                    playsound(self.bell_path)
+                    pygame.mixer.music.load(self.bell_path)
+                    pygame.mixer.music.play()
                 except Exception as e:
                     messagebox.showerror("재생 오류", f"MP3 파일 재생 중 오류 발생: {e}")
-            time.sleep(20)  # 20초마다 확인
+            time.sleep(20)
 
     def exit_program(self):
         self.running = False
         self.root.destroy()
 
-
 if __name__ == "__main__":
     root = tk.Tk()
     app = BellSchedulerApp(root)
     root.mainloop()
-
