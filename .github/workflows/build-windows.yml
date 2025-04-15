@@ -18,7 +18,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install pyinstaller playsound
+        pip install pyinstaller pygame
 
     - name: Build EXE
       run: |
